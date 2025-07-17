@@ -18,7 +18,7 @@ function App() {
         handleNextMonth={handleNextMonth}
       />
       <DayOfWeek />
-      <CalendarGrid calendarGrid={calendarGrid} />
+      <CalendarGrid calendarGrid={calendarGrid} currentDate={currentDate} />
     </>
   );
 }

@@ -22,7 +22,7 @@ export const useCalendar = () => {
     const startDate = new Date(year, month, 1);
     startDate.setDate(startDate.getDate() - startDate.getDay());
 
-    const calendarDays = [];
+    const calendarDays: Date[] = [];
     for (let i = 0; i < 7 * 6; i++) {
       const date = new Date(startDate);
       date.setDate(startDate.getDate() + i);
