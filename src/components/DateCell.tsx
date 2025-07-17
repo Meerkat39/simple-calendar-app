@@ -1,4 +1,5 @@
 import { useAppSelector } from "../redux/hooks";
+import type { Schedule } from "../types/schedule";
 
 type Props = {
   date: Date;
@@ -33,10 +34,28 @@ const DateCell = (props: Props) => {
     return `${baseClasses} text-gray-400 bg-gray-50`;
   };
 
+  const schedulesForThisDay = allSchedules.filter((schedule: Schedule) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+
+    return schedule.date === formattedDate;
+  });
+
   return (
     <div className={getCellClasses()}>
       <div>{date.getDate()}</div>
-      {allSchedules.filter((schedule)=>schedule.date===today)}
+      {schedulesForThisDay.slice(0, 2).map((schedule) => (
+        <div key={schedule.id} className="text-xs truncate">
+          {schedule.title}
+        </div>
+      ))}
+      {schedulesForThisDay.length > 2 && (
+        <div className="text-xs text-gray-600">
+          +{schedulesForThisDay.length - 2} more
+        </div>
+      )}
     </div>
   );
 };

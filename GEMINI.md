@@ -163,10 +163,10 @@
 
 ### **フェーズ 4: 予定管理機能の実装 (Redux)**
 
-- [ ] **5. Redux で予定を管理**:
-  - [ ] 予定（Schedule）の型定義（`interface`）を作成する。
-  - [ ] 予定を管理するための`scheduleSlice`を Redux Toolkit で作成する。
-  - [ ] カレンダーに Redux ストアから取得した予定情報を表示する。
+- [x] **5. Redux で予定を管理**:
+  - [x] 予定（Schedule）の型定義（`interface`）を作成する。
+  - [x] 予定を管理するための`scheduleSlice`を Redux Toolkit で作成する。
+  - [x] カレンダーに Redux ストアから取得した予定情報を表示する。
 - [ ] **6. 予定作成機能**:
   - [ ] 予定入力用の`ScheduleModal`コンポーネントを作成する。
   - [ ] 「新規予定」ボタンでモーダルが開くようにする。

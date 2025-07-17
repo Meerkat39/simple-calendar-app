@@ -19,6 +19,12 @@ const initialState: Schedule[] = [
   },
   {
     id: nanoid(),
+    title: "懇親会",
+    date: "2025-07-20",
+    category: "private",
+  },
+  {
+    id: nanoid(),
     title: "友人とランチ",
     date: "2025-07-22",
     category: "private",
