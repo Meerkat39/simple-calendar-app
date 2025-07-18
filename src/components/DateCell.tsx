@@ -1,4 +1,5 @@
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { openModal, selectDate } from "../redux/uiSlice";
 import type { Schedule } from "../types/schedule";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 const DateCell = (props: Props) => {
   const { date, currentDate } = props;
   const allSchedules = useAppSelector((state) => state.schedules);
+  const dispatch = useAppDispatch();
 
   const today = new Date();
 
@@ -43,8 +45,17 @@ const DateCell = (props: Props) => {
     return schedule.date === formattedDate;
   });
 
+  const handleDateClick = () => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    dispatch(selectDate(formattedDate));
+    dispatch(openModal());
+  };
+
   return (
-    <div className={getCellClasses()}>
+    <div onClick={handleDateClick} className={getCellClasses()}>
       <div>{date.getDate()}</div>
       {schedulesForThisDay.slice(0, 2).map((schedule) => (
         <div key={schedule.id} className="text-xs truncate">
