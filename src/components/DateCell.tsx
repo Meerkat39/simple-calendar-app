@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { openModal, selectDate } from "../redux/uiSlice";
+import { openModal, selectDate, setEditingSchedule } from "../redux/uiSlice";
 import type { Schedule } from "../types/schedule";
 
 type Props = {
@@ -23,7 +23,7 @@ const DateCell = (props: Props) => {
 
   const getCellClasses = () => {
     const baseClasses =
-      "p-2 h-24 transition-colors duration-200 ease-in-out border-b border-r border-gray-400";
+      "p-2 flex flex-col h-full border-b border-r border-gray-400 overflow-hidden";
 
     if (isToday) {
       return `${baseClasses} bg-blue-500 text-white font-bold`;
@@ -54,19 +54,34 @@ const DateCell = (props: Props) => {
     dispatch(openModal());
   };
 
+  const handleScheduleClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    schedule: Schedule
+  ) => {
+    e.stopPropagation();
+    dispatch(setEditingSchedule(schedule));
+    dispatch(openModal());
+  };
+
   return (
     <div onClick={handleDateClick} className={getCellClasses()}>
-      <div>{date.getDate()}</div>
-      {schedulesForThisDay.slice(0, 2).map((schedule) => (
-        <div key={schedule.id} className="text-xs truncate">
-          {schedule.title}
-        </div>
-      ))}
-      {schedulesForThisDay.length > 2 && (
-        <div className="text-xs text-gray-600">
-          +{schedulesForThisDay.length - 2} more
-        </div>
-      )}
+      <div className="text-left text-sm md:text-base font-semibold flex-shrink-0">{date.getDate()}</div>
+      <div className="flex-grow overflow-y-auto pr-1 space-y-1 min-h-0 h-0">
+        {schedulesForThisDay.slice(0, 2).map((schedule) => (
+          <div
+            onClick={(e) => handleScheduleClick(e, schedule)}
+            key={schedule.id}
+            className="text-xs truncate bg-blue-200 hover:bg-blue-300 cursor-pointer p-1 rounded"
+          >
+            {schedule.title}
+          </div>
+        ))}
+        {schedulesForThisDay.length > 2 && (
+          <div className="text-xs text-gray-600">
+            +{schedulesForThisDay.length - 2} more
+          </div>
+        )}
+      </div>
     </div>
   );
 };

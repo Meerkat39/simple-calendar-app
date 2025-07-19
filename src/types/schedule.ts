@@ -9,4 +9,3 @@ export interface Schedule {
   category: ScheduleCategory;
   description?: string;
 }
-

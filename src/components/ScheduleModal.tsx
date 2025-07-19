@@ -1,20 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { addSchedule } from "../redux/scheduleSlice";
+import {
+  addSchedule,
+  deleteSchedule,
+  updateSchedule,
+} from "../redux/scheduleSlice"; // deleteSchedule をインポート
 import { closeModal } from "../redux/uiSlice";
 import { type ScheduleCategory } from "../types/schedule";
 
 const ScheduleModal = () => {
   const [title, setTitle] = useState("");
+  const [date, setDate] = useState("");
   const [category, setCategory] = useState<ScheduleCategory>("work");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [description, setDescription] = useState("");
-  const { selectedDate } = useAppSelector((state) => state.ui);
+  const { selectedDate, editingSchedule } = useAppSelector((state) => state.ui);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (editingSchedule) {
+      setTitle(editingSchedule.title);
+      setDate(editingSchedule.date);
+      setCategory(editingSchedule.category);
+      setStartTime(editingSchedule.startTime || "");
+      setEndTime(editingSchedule.endTime || "");
+      setDescription(editingSchedule.description || "");
+    } else {
+      setDate(selectedDate || "");
+    }
+  }, [editingSchedule, selectedDate]);
 
   const handleCloseModal = () => {
     dispatch(closeModal());
+
+    setTitle("");
+    setDate("");
+    setCategory("work");
+    setStartTime("");
+    setEndTime("");
+    setDescription("");
   };
 
   const handleModalContentClick = (e: React.MouseEvent) => {
@@ -22,8 +47,8 @@ const ScheduleModal = () => {
   };
 
   const handleSave = () => {
-    if (!selectedDate) {
-      alert("日付が選択されていません。");
+    if (!date) {
+      alert("日付を選択してください。");
       return;
     }
 
@@ -32,23 +57,48 @@ const ScheduleModal = () => {
       return;
     }
 
-    dispatch(
-      addSchedule({
-        title,
-        date: selectedDate,
-        startTime,
-        endTime,
-        category,
-        description,
-      })
-    );
+    if (editingSchedule) {
+      dispatch(
+        updateSchedule({
+          id: editingSchedule.id,
+          title,
+          date,
+          startTime,
+          endTime,
+          category,
+          description,
+        })
+      );
+    } else {
+      dispatch(
+        addSchedule({
+          title,
+          date,
+          startTime,
+          endTime,
+          category,
+          description,
+        })
+      );
+    }
 
     dispatch(closeModal());
     setTitle("");
+    setDate("");
     setCategory("work");
     setStartTime("");
     setEndTime("");
     setDescription("");
+  };
+
+  const handleDelete = () => {
+    if (
+      editingSchedule &&
+      window.confirm("この予定を削除してもよろしいですか？")
+    ) {
+      dispatch(deleteSchedule(editingSchedule.id));
+      dispatch(closeModal());
+    }
   };
 
   return (
@@ -60,7 +110,10 @@ const ScheduleModal = () => {
         className="bg-white p-6 rounded-lg w-full max-w-lg shadow-xl"
         onClick={handleModalContentClick}
       >
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">新しい予定</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          {editingSchedule ? "予定を編集" : "新しい予定"}{" "}
+          {/* タイトルを動的に変更 */}
+        </h2>
 
         <form>
           <div className="space-y-4">
@@ -79,6 +132,23 @@ const ScheduleModal = () => {
                 placeholder="予定のタイトルを入力"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+
+            {/* 日付 */}
+            <div>
+              <label
+                htmlFor="date"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                日付
+              </label>
+              <input
+                type="date"
+                id="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
               />
             </div>
 
@@ -159,19 +229,33 @@ const ScheduleModal = () => {
         </form>
 
         {/* ボタン */}
-        <div className="flex justify-end mt-6">
-          <button
-            onClick={handleCloseModal}
-            className="mr-3 px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
-          >
-            キャンセル
-          </button>
-          <button
-            onClick={handleSave}
-            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
-          >
-            保存
-          </button>
+        <div className="flex justify-between items-center mt-6">
+          {" "}
+          {/* justify-end から justify-between に変更 */}
+          {editingSchedule && ( // 編集モードの時だけ削除ボタンを表示
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
+            >
+              削除
+            </button>
+          )}
+          <div className="flex">
+            {" "}
+            {/* 右寄せボタンをまとめるための div */}
+            <button
+              onClick={handleCloseModal}
+              className="mr-3 px-4 py-2 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 transition-colors"
+            >
+              キャンセル
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              保存
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -25,6 +25,12 @@ const initialState: Schedule[] = [
   },
   {
     id: nanoid(),
+    title: "新しい予定4", // これを追加
+    date: "2025-07-20",
+    category: "other",
+  },
+  {
+    id: nanoid(),
     title: "友人とランチ",
     date: "2025-07-22",
     category: "private",
@@ -45,8 +51,20 @@ export const scheduleSlice = createSlice({
         return { payload: { id, ...schedule } };
       },
     },
+    updateSchedule: (state, action: PayloadAction<Schedule>) => {
+      const { id } = action.payload;
+      const index = state.findIndex((schedule) => schedule.id === id);
+      if (index !== -1) {
+        state[index] = action.payload;
+      }
+    },
+    deleteSchedule: (state, action: PayloadAction<string>) => {
+      const idToDelete = action.payload;
+      return state.filter((schedule) => schedule.id !== idToDelete);
+    },
   },
 });
 
-export const { addSchedule } = scheduleSlice.actions;
+export const { addSchedule, updateSchedule, deleteSchedule } =
+  scheduleSlice.actions;
 export default scheduleSlice.reducer;
