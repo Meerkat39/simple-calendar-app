@@ -6,6 +6,9 @@
 
 Reactによるコンポーネント設計や状態管理、TypeScriptによる型安全な開発、さらにRedux Toolkitを用いた効率的な状態管理の基本を学ぶことを目的として制作しました。
 
+## デモ
+![全体像](screenshot_overview.png)
+
 ## 主な機能
 
 - 月間カレンダーの表示
